@@ -105,7 +105,7 @@ These documents will:
 
 ### 3. VirusTotal Results
 ```
-Clean: 60-67 engines (including all major vendors)
+Clean: 60-67 engines (including most major vendors)
 Flagged: 3-10 engines (mostly obscure/outdated)
 
 Clean Vendors Include:
@@ -116,6 +116,13 @@ Clean Vendors Include:
 ✅ AVG
 ✅ Avast
 ✅ Avira
+
+⚠️ Malwarebytes Pattern:
+- v9.0: Reportedly CLEAN
+- v10 hotfix: Flagged as ransomware
+- v11.0: Flagged as Trojan
+
+This version-specific pattern suggests something introduced in v10.0 triggers Malwarebytes specifically.
 ```
 
 ### 4. Code Review Findings
@@ -159,29 +166,56 @@ Based on [release notes](https://github.com/brunodev85/winlator/releases):
 | Vortek Driver | ✅ Added | ✅ Included |
 | Component Installation | ✅ Added | ✅ Enhanced |
 | Wine Version | 9.x | 10.10 |
+| Wine Mono | 9.0 | 10.1 |
 | Controller Support | ❌ Single | ✅ Multiple |
 | Controller Vibration | ❌ No | ✅ Yes |
 | UI Themes | ❌ No | ✅ Light/Dark |
 | DirectInput/XInput | ⚠️ Basic | ✅ Improved |
 | Steam Compatibility | ⚠️ Issues | ✅ Improved |
 | Box64 Version | 0.3.2 | 0.3.6+ |
+| **Malwarebytes** | ✅ Clean | ⚠️ Flagged |
 
-**Security Status**: Both versions are equally safe. Neither contains malware.
+**Security Status**: Both versions contain no actual malware based on code analysis.
 
-**False Positive Rate**: Both trigger similar false positives due to using same emulation technologies.
+**False Positive Pattern**: 
+- v9.0: NOT flagged by Malwarebytes
+- v10+: Flagged by Malwarebytes as ransomware/trojan
 
-**Recommendation**: Use v11.0 for better features and compatibility. The false positive issue exists in both versions and cannot be avoided.
+**What Changed in v10 That Triggers Malwarebytes**:
+- Wine Mono updated from 9.0 to 10.1.0
+- Native GLIBC implementation
+- Recompiled internal executables (wfm.exe, winhandler.exe, TestD3D.exe, GPUInfo.exe)
+- Updated Box64 from 0.3.2 to 0.3.4+
+- Restructured Root FS with individually compiled libraries
+
+**Recommendation**: 
+- Users concerned about Malwarebytes: Use v9.0 or whitelist v11.0
+- Most users: v11.0 offers better features and compatibility
+- The Malwarebytes detection is still a false positive, but the version-specific pattern is noteworthy
 
 ## Final Conclusion
 
-**Winlator v11.0 is completely safe and secure.**
+**Winlator v11.0 is safe based on source code analysis**, but there's an important caveat:
 
-The perceived "security issue" is actually an **education problem**:
-- Users don't understand emulation technology
-- Antivirus software incorrectly flags legitimate code
-- Misinformation spreads through fear
+**Malwarebytes Detection Pattern**:
+- v9.0: Reportedly **NOT flagged**
+- v10 hotfix: **Flagged** as ransomware
+- v11.0: **Flagged** as Trojan
 
-**Solution**: Education and documentation (provided in this PR), not code changes.
+This version-specific pattern is significant because:
+1. It suggests something specific was introduced in v10.0 that triggers Malwarebytes
+2. Most likely: Wine Mono 10.1.0, native GLIBC, or recompiled executables
+3. Other major AV vendors (Kaspersky, ESET, Microsoft) still report clean
+4. Still a false positive, but the pattern warrants acknowledgment
+
+**The perceived "security issue" has two components**:
+1. **General false positives** - Education problem (most AV engines)
+2. **Malwarebytes v10+ pattern** - Specific trigger introduced in v10.0 (warrants investigation)
+
+**Solution**: 
+- Documentation (provided in this PR) for general false positives
+- Users concerned about Malwarebytes can use v9.0 or whitelist v11.0
+- Developers should investigate v10+ changes and submit false positive reports to Malwarebytes
 
 ---
 

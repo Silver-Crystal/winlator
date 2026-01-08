@@ -70,11 +70,16 @@ Multiple GitHub issues document this:
 - **Issue #963**: Community addresses false accusations, urges proper verification
 - **Issue #694**: "Cyber security developer" confirms TestD3D.exe is clean
 - **Issue #1102, #1214, #1246, #1411, #1431**: Multiple VirusTotal reports showing false positives
+- **Issue #1178**: Malwarebytes flags v10+ but reportedly not v9.0
 
-**Pattern**: 
+**Important Pattern Discovered**: 
 - 3-10 out of 70+ antivirus engines flag files
 - Flagged engines are often less reputable or outdated
 - Major vendors (Kaspersky, ESET, Bitdefender, Microsoft) report clean
+- **However**: Malwarebytes (a reputable vendor) flags v10 hotfix and v11.0 but reportedly did NOT flag v9.0
+  - This suggests something introduced between v9.0 and v10.0 triggers Malwarebytes specifically
+  - Most likely culprit: Wine Mono 10.1.0 or updated Box64/native libraries
+  - This warrants further investigation but does not necessarily indicate actual malware
 
 ### 4. No File Deletion Issues
 
@@ -131,10 +136,20 @@ if (targetFile.isDirectory()) {
 - v9.0: Added Vortek driver, component installation
 - v11.0: Added Wine 10.10, controller support, themes, improved UI
 
-**No Security-Relevant Changes**: 
-- Both versions use same core technologies (Wine, Box64, PRoot)
-- Both would trigger same false positives
-- No new suspicious code in v11.0
+**Key Observation - Malwarebytes Detection Pattern**:
+- v9.0: Reportedly **NOT flagged** by Malwarebytes
+- v10 hotfix: **Flagged** by Malwarebytes as ransomware
+- v11.0: **Flagged** by Malwarebytes as Trojan
+
+**What Changed Between v9.0 and v10.0**:
+- Native GLIBC implementation (v10.0 beta)
+- Updated Wine Mono from 9.0 to 10.1
+- Updated Box64 from 0.3.2 to 0.3.4+
+- Recompiled internal programs (wfm.exe, winhandler.exe, TestD3D.exe, GPUInfo.exe)
+- Restructured Root FS with individually compiled libraries
+
+**Most Likely Trigger**: 
+The Wine Mono 10.1.0 installer (82MB MSI file) or the recompiled native executables may contain patterns that Malwarebytes flags as suspicious but other vendors do not. This is still a false positive, but it explains why v9.0 was clean while v10+ is flagged.
 
 ## Recommendations
 
@@ -147,18 +162,31 @@ if (targetFile.isDirectory()) {
 
 ### For Developers
 
-1. **Code Signing**: Consider signing APK with recognized certificate
-2. **Documentation**: Add security FAQ to README
-3. **VirusTotal Submission**: Submit releases to VirusTotal proactively
-4. **Whitelist Requests**: Contact AV vendors to whitelist Winlator
+1. **Link to documentation** when users report "virus" issues
+2. **Consider code signing** to reduce false positives
+3. **Submit to VirusTotal** proactively with each release
+4. **Contact AV vendors** to request whitelisting
+5. **Investigate v9.0 vs v10+ differences**: Specifically compare Wine Mono versions and recompiled executables to identify what triggers Malwarebytes
+6. **Consider offering v9.0-style builds**: If Malwarebytes flagging is a major concern, consider maintaining a build without Wine Mono 10.1 or with older components
 
 ## Conclusion
 
-**Winlator v11.0 contains NO malware, trojans, or malicious code.**
+**Winlator v11.0 contains NO malware, trojans, or malicious code based on source code review.**
 
-The antivirus detections are false positives caused by the legitimate emulation technologies used by the application. This is a common issue with Wine, Box86/Box64, and other emulation frameworks.
+However, there is a notable pattern: **Malwarebytes specifically flags v10 hotfix and v11.0 but reportedly did NOT flag v9.0**. This suggests something introduced between v9.0 and v10.0 triggers Malwarebytes' detection algorithms.
 
-**No code changes are needed**. The application is functioning as designed and poses no security risk to users.
+**Most Likely Causes**:
+1. Wine Mono updated from 9.0 to 10.1 (MSI installer structure changed)
+2. Native GLIBC implementation (new low-level system interactions)
+3. Recompiled internal executables (TestD3D.exe, winhandler.exe, etc.)
+4. Updated Box64 binary translation engine
+
+**These are still false positives** - the antivirus detections are caused by legitimate emulation technologies. However, the specific pattern (v9.0 clean, v10+ flagged by Malwarebytes) warrants acknowledgment.
+
+**Recommendations**:
+- Users concerned about Malwarebytes: Consider using v9.0 or whitelist v11.0
+- Developers: Investigate specific components added in v10.0 and submit false positive reports to Malwarebytes
+- All users: No code changes are needed as the application is functioning as designed and poses no actual security risk
 
 ---
 

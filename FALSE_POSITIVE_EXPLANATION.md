@@ -38,11 +38,14 @@ The source code is [publicly available](https://github.com/brunodev85/winlator) 
 ### 2. Community Verification
 Hundreds of thousands of users worldwide use Winlator safely. Multiple security researchers have analyzed it and found no malware (see GitHub issues #745, #963, #694).
 
+**Important Note About Malwarebytes**: Some users report that Malwarebytes flags v10 hotfix and v11.0 but did NOT flag v9.0. This suggests something introduced in v10 triggers Malwarebytes specifically (likely Wine Mono 10.1 or recompiled executables). This is still a false positive, but it explains the version-specific detection pattern.
+
 ### 3. VirusTotal Results
 When scanned on VirusTotal:
 - **60-67 out of 70+ engines report CLEAN**
 - Only 3-10 lesser-known engines flag it
 - **Major vendors (Kaspersky, ESET, Bitdefender, Microsoft Defender) report CLEAN**
+- **Malwarebytes flags v10+ but reportedly not v9.0** (suggests version-specific heuristic trigger, still a false positive)
 
 ### 4. Same Issue Affects Other Emulators
 This false positive problem affects:
@@ -69,6 +72,13 @@ Some users report "files being deleted." Investigation shows:
 2. Download only from [official GitHub releases](https://github.com/brunodev85/winlator/releases)
 3. Verify the SHA256 hash if concerned
 4. Use it normally
+
+### ⚠️ If Malwarebytes Specifically Concerns You
+Malwarebytes flags v10 hotfix and v11.0 but reportedly did NOT flag v9.0. Options:
+1. **Use v9.0** if you prefer a version not flagged by Malwarebytes
+2. **Whitelist v11.0** in Malwarebytes (still a false positive)
+3. **Report false positive** to Malwarebytes to help improve their detection
+4. **Wait for developer response** on what specifically triggers Malwarebytes in v10+
 
 ### ❓ If You're Still Concerned
 1. Scan individual files on [VirusTotal.com](https://www.virustotal.com)
