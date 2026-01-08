@@ -23,7 +23,7 @@ Winlator is an Android application that runs Windows x86/x86_64 applications usi
 ### 1. No Malicious Code Found
 
 **File Deletion Operations**
-- File deletion in `FileUtils.java` (lines 113-132) is standard and safe:
+- File deletion in `FileUtils.java` (lines 113-118 for delete, 121-132 for clear) is standard and safe:
   - Checks for null pointers
   - Handles symbolic links properly
   - Used only for container management (user-initiated)
@@ -89,14 +89,14 @@ Multiple GitHub issues document this:
 
 **Safeguards Present**:
 ```java
-// FileUtils.java:115-117
+// FileUtils.java line 115-116
 if (targetFile.isDirectory()) {
     if (!isSymlink(targetFile)) if (!clear(targetFile)) return false;
 }
 ```
-- Symlink protection prevents accidental deletion
+- Symlink protection prevents accidental deletion outside containers
 - Directory clearing requires explicit calls
-- User data in `/home/user-*` directories preserved
+- User data in container directories (`/home/user-*`) preserved during normal operations
 
 ## Technical Details
 
@@ -163,5 +163,6 @@ The antivirus detections are false positives caused by the legitimate emulation 
 ---
 
 *Analysis Date: January 8, 2026*  
-*Analyzed Version: v11.0.0 (commit 95b053b)*  
-*Analyst: GitHub Copilot Security Analysis*
+*Repository: Silver-Crystal/winlator fork*  
+*Analyzed Version: v11.0.0*  
+*Analyst: GitHub Copilot Security Review*
