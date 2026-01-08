@@ -6,6 +6,14 @@
 
 Winlator is an Android application that lets you to run Windows (x86_64) applications with Wine and Box86/Box64.
 
+## ⚠️ About Antivirus False Positives
+
+**If your antivirus is flagging Winlator, please read**: [FALSE_POSITIVE_EXPLANATION.md](FALSE_POSITIVE_EXPLANATION.md)
+
+**TL;DR**: Winlator is safe. Antivirus warnings are false positives caused by legitimate emulation technology (Wine, Box86/Box64). This is normal for emulation software.
+
+For technical details, see: [SECURITY_ANALYSIS.md](SECURITY_ANALYSIS.md)
+
 # Installation
 
 1. Download and install the APK (Winlator_10.1.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
