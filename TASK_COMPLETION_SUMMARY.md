@@ -117,12 +117,12 @@ Clean Vendors Include:
 ✅ Avast
 ✅ Avira
 
-⚠️ Malwarebytes Pattern:
-- v9.0: Reportedly CLEAN
-- v10 hotfix: Flagged as ransomware
-- v11.0: Flagged as Trojan
+⚠️ Malwarebytes Pattern (Confirmed with Commit References):
+- Commit 4581fdd (v9.0): ✅ NOT flagged
+- Commit 96504ff (v10 hotfix): ⚠️ Flagged as Trojan
+- Commit 95b053b (v11.0): ⚠️ Flagged as Trojan
 
-This version-specific pattern suggests something introduced in v10.0 triggers Malwarebytes specifically.
+This confirms something specific introduced between commits 4581fdd and 96504ff triggers Malwarebytes.
 ```
 
 ### 4. Code Review Findings
@@ -159,9 +159,9 @@ Consider merging this PR to help users understand and properly handle antivirus 
 
 ## Comparison: v9.0 vs v11.0
 
-Based on [release notes](https://github.com/brunodev85/winlator/releases):
+Based on [release notes](https://github.com/brunodev85/winlator/releases) and confirmed commit references:
 
-| Feature | v9.0 | v11.0 |
+| Feature | v9.0 (4581fdd) | v11.0 (95b053b) |
 |---------|------|-------|
 | Vortek Driver | ✅ Added | ✅ Included |
 | Component Installation | ✅ Added | ✅ Enhanced |
@@ -177,11 +177,12 @@ Based on [release notes](https://github.com/brunodev85/winlator/releases):
 
 **Security Status**: Both versions contain no actual malware based on code analysis.
 
-**False Positive Pattern**: 
-- v9.0: NOT flagged by Malwarebytes
-- v10+: Flagged by Malwarebytes as ransomware/trojan
+**Malwarebytes Detection Pattern (Confirmed)**:
+- **Commit 4581fdd (v9.0)**: ✅ NOT flagged
+- **Commit 96504ff (v10 hotfix)**: ⚠️ Flagged as Trojan  
+- **Commit 95b053b (v11.0)**: ⚠️ Flagged as Trojan
 
-**What Changed in v10 That Triggers Malwarebytes**:
+**What Changed Between 4581fdd (v9.0) and 96504ff (v10 hotfix)**:
 - Wine Mono updated from 9.0 to 10.1.0
 - Native GLIBC implementation
 - Recompiled internal executables (wfm.exe, winhandler.exe, TestD3D.exe, GPUInfo.exe)
@@ -189,33 +190,35 @@ Based on [release notes](https://github.com/brunodev85/winlator/releases):
 - Restructured Root FS with individually compiled libraries
 
 **Recommendation**: 
-- Users concerned about Malwarebytes: Use v9.0 or whitelist v11.0
+- Users concerned about Malwarebytes: Use v9.0 (commit 4581fdd) or whitelist v11.0
 - Most users: v11.0 offers better features and compatibility
-- The Malwarebytes detection is still a false positive, but the version-specific pattern is noteworthy
+- Developers: Compare commits 4581fdd and 96504ff to identify exact trigger
+- The Malwarebytes detection is still a false positive, confirmed by source code review
 
 ## Final Conclusion
 
-**Winlator v11.0 is safe based on source code analysis**, but there's an important caveat:
+**Winlator v11.0 is safe based on source code analysis**, but there's an important caveat confirmed with specific commit references:
 
-**Malwarebytes Detection Pattern**:
-- v9.0: Reportedly **NOT flagged**
-- v10 hotfix: **Flagged** as ransomware
-- v11.0: **Flagged** as Trojan
+**Malwarebytes Detection Pattern (Confirmed)**:
+- **Commit 4581fdd (v9.0)**: ✅ **NOT flagged**
+- **Commit 96504ff (v10 hotfix)**: ⚠️ **Flagged** as Trojan
+- **Commit 95b053b (v11.0)**: ⚠️ **Flagged** as Trojan
 
-This version-specific pattern is significant because:
-1. It suggests something specific was introduced in v10.0 that triggers Malwarebytes
+This pattern is significant because:
+1. It confirms something specific introduced between commits 4581fdd and 96504ff triggers Malwarebytes
 2. Most likely: Wine Mono 10.1.0, native GLIBC, or recompiled executables
 3. Other major AV vendors (Kaspersky, ESET, Microsoft) still report clean
-4. Still a false positive, but the pattern warrants acknowledgment
+4. Still a false positive based on code review, but the commit-specific pattern is now confirmed
 
 **The perceived "security issue" has two components**:
 1. **General false positives** - Education problem (most AV engines)
-2. **Malwarebytes v10+ pattern** - Specific trigger introduced in v10.0 (warrants investigation)
+2. **Malwarebytes commit-specific pattern** - Specific trigger between 4581fdd and 96504ff (warrants investigation)
 
 **Solution**: 
 - Documentation (provided in this PR) for general false positives
-- Users concerned about Malwarebytes can use v9.0 or whitelist v11.0
-- Developers should investigate v10+ changes and submit false positive reports to Malwarebytes
+- Users concerned about Malwarebytes: Use v9.0 (commit 4581fdd) or whitelist v11.0
+- Developers: Compare commits 4581fdd and 96504ff to identify exact trigger
+- Developers: Submit false positive report to Malwarebytes with commit references
 
 ---
 
